@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMI Tracker</title>
+  <style>
+    :root {
+      --primary: #10b981;
+      --secondary: #d1fae5;
+      --bg: #f0fdf4;
+      --text-dark: #065f46;
+      --text-light: #065f46;
+      --white: #ffffff;
+      --shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .tracker-container {
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 30px 40px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      color: var(--primary);
+      margin-bottom: 25px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    label {
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 5px;
+      display: block;
+      text-align: left;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1em;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    button {
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #059669;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="tracker-container">
+    <h1>BMI Tracker</h1>
+    <form id="bmiForm">
+      <div>
+        <label for="weight">Weight (kg):</label>
+        <input type="number" id="weight" name="weight" placeholder="Enter your weight" required>
+      </div>
+
+      <div>
+        <label for="height">Height (cm):</label>
+        <input type="number" id="height" name="height" placeholder="Enter your height" required>
+      </div>
+
+      <button type="submit">Calculate BMI</button>
+    </form>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const bmiForm = document.getElementById('bmiForm');
+    const resultDiv = document.getElementById('result');
+
+    // Load saved values
+    window.onload = function() {
+      const savedBMI = JSON.parse(localStorage.getItem('bmiData'));
+      if (savedBMI) {
+        document.getElementById('weight').value = savedBMI.weight;
+        document.getElementById('height').value = savedBMI.height;
+        calculateBMI(savedBMI.weight, savedBMI.height);
+      }
+    };
+
+    bmiForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const weight = parseFloat(document.getElementById('weight').value);
+      const height = parseFloat(document.getElementById('height').value);
+      
+      localStorage.setItem('bmiData', JSON.stringify({ weight, height }));
+      calculateBMI(weight, height);
+    });
+
+    function calculateBMI(weight, height) {
+      const heightM = height / 100;
+      const bmi = (weight / (heightM * heightM)).toFixed(2);
+      let category = '';
+
+      if (bmi < 18.5) category = 'Underweight';
+      else if (bmi < 24.9) category = 'Normal weight';
+      else if (bmi < 29.9) category = 'Overweight';
+      else category = 'Obesity';
+
+      resultDiv.textContent = `Your BMI is ${bmi} (${category})`;
+    }
+  </script>
+</body>
+</html>
